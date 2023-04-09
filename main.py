@@ -1,99 +1,89 @@
-# Import necessary modules
 import tkinter as tk
-from tkinter import ttk
-from tkinter import messagebox
-from tkinter import filedialog
+from tkinter import ttk, messagebox, filedialog
 from pytube import YouTube
 import os
 
-# Define global variables
-global links
-links = []
-global folder_path
-folder_path = ''
-global title
 
-#function to browse for the folder where the files will be saved
-def browse_folder():
-    global folder_path
-    folder_path = filedialog.askdirectory()
-    os.chdir(folder_path)
+class YTBatchDL:
+    def __init__(self, master):
+        self.master = master
+        master.geometry('600x300')
+        master.resizable(False, False)
+        master.title("YouTube Batch Download")
+        master.iconbitmap(r'youtube_icon.ico')
+        master.configure(bg='FireBrick')
 
-#function to store the text from the main text box in a list separated per line
-def store_text():
-    global links
-    # Get the contents of the text box
-    text = main_text_box.get('1.0', 'end')
-    links = text.split()
+        self.links = []
+        self.folder_path = ''
+        self.title = ''
 
-    if len(links) == 0:
-        messagebox.showinfo("Error", 'The list is empty.')
+        self.main_text_box = tk.Text(master, width=50, height=10)
+        self.main_text_box.place(x=100, y=5)
 
-#function to download the links
-def download_links():
-    global title
-    global links
-    for link in links:
-        try:
-            yt = YouTube(link)
-            title = yt.title
-            # Create a Tkinter variable to hold the selected option
-            combo_box_choice = combo_box.get()
+        self.main_text_box_label = tk.Label(master, text='Paste YouTube link(s) here')
+        self.main_text_box_label.place(x=230, y=173)
 
-            if combo_box_choice == "MP3":
-                downloader = yt.streams.filter(only_audio = True).get_audio_only()
-                print(f"Downloading: {title}")
-                downloader.download()
+        self.store_button = tk.Button(master, text="Save Links", command=self.store_text, width=40)
+        self.store_button.place(x=100, y=200)
 
-                #converts downloaded file to mp3 (default is mp4)
-                files_in_dir = os.listdir()
-                for file in files_in_dir:
-                    if file.endswith('.mp4'):
-                        os.rename(file, os.path.splitext(file)[0] + '.mp3')
-            else:
-                downloader = yt.streams.get_highest_resolution()
-                print(f"Downloading: {title}")
-                downloader.download()
-        except:
-             messagebox.showinfo("Error", 'Not All Links Are Downloaded. Some Link(s) Does Not Exist.')
+        self.combobox_options = ["MP3", "MP4"]
+        self.combo_box = ttk.Combobox(master, values=self.combobox_options, state="readonly", width=14)
+        self.combo_box.current(0)
+        self.combo_box.place(x=395, y=200)
 
-    #If there are no links or if the "Get Links" button was not clicked, show an error message
-    if len(links) == 0:
-        messagebox.showinfo("Error", 'The list is empty or you didnt click "Get Links".')
+        self.download_button = tk.Button(master, text="Download", command=self.download_links, width=40)
+        self.download_button.place(x=100, y=230)
 
-# Create the main window
-window = tk.Tk()
-window.geometry('600x300')
-window.resizable(False, False)
-window.title("YTD")
-window.iconbitmap(r'youtube_icon.ico')
-window.configure(bg = 'FireBrick')
+        self.browse_folder_button = tk.Button(master, text="Save To", command=self.browse_folder, width=14)
+        self.browse_folder_button.place(x=395, y=230)
 
-# main text box for links input
-main_text_box = tk.Text(window, width = 50, height = 10)
-main_text_box.place(x = 100, y = 5)
+    #function to browse for the folder where the files will be saved
+    def browse_folder(self):
+        self.folder_path = filedialog.askdirectory()
+        os.chdir(self.folder_path)
 
-main_text_box_label = tk.Label(window, text = 'Paste YouTube link(s) here')
-main_text_box_label.place(x = 230, y = 173)
+    #function to store the text from the main text box in a list separated per line
+    def store_text(self):
+        # Get the contents of the text box
+        text = self.main_text_box.get('1.0', 'end')
+        self.links = text.split()
 
-# button to store the links from the main text box into a list
-store_button = tk.Button(window, text = "Save Links", command = store_text, width = 40)
-store_button.place(x = 100, y = 200)
+        if len(self.links) == 0:
+            messagebox.showinfo("Error", 'The list is empty.')
 
-# select the file type to download
-combobox_options = ["MP3", "MP4"]
-combo_box = ttk.Combobox(window, values=combobox_options, state = "readonly", width = 14)
-combo_box.current(0)
-combo_box.place(x = 395, y = 200)
+    #function to download the links
+    def download_links(self):
+        for link in self.links:
+            try:
+                yt = YouTube(link)
+                self.title = yt.title
 
-# button to download the links
-download_button = tk.Button(window, text = "Download", command = download_links, width = 40)
-download_button.place(x = 100, y = 230)
+                # Create a Tkinter variable to hold the selected option
+                combo_box_choice = self.combo_box.get()
 
-# button to browse for the folder where the files will be saved
-browse_folder_button = tk.Button(window, text = "Save To", command = browse_folder, width = 14)
-browse_folder_button.place(x = 395, y = 230)
+                if combo_box_choice == "MP3":
+                    downloader = yt.streams.filter(only_audio=True).get_audio_only()
+                    print(f"Downloading: {self.title}")
+                    downloader.download()
 
-window.mainloop()
+                    #converts downloaded file to mp3 (default is mp4)
+                    files_in_dir = os.listdir()
+                    for file in files_in_dir:
+                        if file.endswith('.mp4'):
+                            os.rename(file, os.path.splitext(file)[0] + '.mp3')
+                else:
+                    downloader = yt.streams.get_highest_resolution()
+                    print(f"Downloading: {self.title}")
+                    downloader.download()
+            except:
+                messagebox.showinfo("Error", 'Not All Links Are Downloaded. Some Link(s) Does Not Exist.')
+
+        #If there are no links or if the "Get Links" button was not clicked, show an error message
+        if len(self.links) == 0:
+            messagebox.showinfo("Error", 'The list is empty or you didnt click "Get Links".')
 
 
+if __name__ == '__main__':
+    root = tk.Tk()
+    app = YTBatchDL(root)
+    root.mainloop()
