@@ -5,36 +5,36 @@ import os
 
 
 class YTBatchDL:
-    def __init__(self, master):
-        self.master = master
-        master.geometry('600x300')
-        master.resizable(False, False)
-        master.title("YouTube Batch Download")
-        master.iconbitmap(r'youtube_icon.ico')
-        master.configure(bg='FireBrick')
+    def __init__(self, main):
+        self.main = main
+        main.geometry('600x300')
+        main.resizable(False, False)
+        main.title("YouTube Batch Download")
+        main.iconbitmap(r'youtube_icon.ico')
+        main.configure(bg='FireBrick')
 
         self.links = []
         self.folder_path = ''
         self.title = ''
 
-        self.main_text_box = tk.Text(master, width=50, height=10)
+        self.main_text_box = tk.Text(main, width=50, height=10)
         self.main_text_box.place(x=100, y=5)
 
-        self.main_text_box_label = tk.Label(master, text='Paste YouTube link(s) here')
+        self.main_text_box_label = tk.Label(main, text='Paste YouTube link(s) here')
         self.main_text_box_label.place(x=230, y=173)
 
-        self.store_button = tk.Button(master, text="Save Links", command=self.store_text, width=40)
+        self.store_button = tk.Button(main, text="Save Links", command=self.store_text, width=40)
         self.store_button.place(x=100, y=200)
 
         self.combobox_options = ["MP3", "MP4"]
-        self.combo_box = ttk.Combobox(master, values=self.combobox_options, state="readonly", width=14)
+        self.combo_box = ttk.Combobox(main, values=self.combobox_options, state="readonly", width=14)
         self.combo_box.current(0)
         self.combo_box.place(x=395, y=200)
 
-        self.download_button = tk.Button(master, text="Download", command=self.download_links, width=40)
+        self.download_button = tk.Button(main, text="Download", command=self.download_links, width=40)
         self.download_button.place(x=100, y=230)
 
-        self.browse_folder_button = tk.Button(master, text="Save To", command=self.browse_folder, width=14)
+        self.browse_folder_button = tk.Button(main, text="Save To", command=self.browse_folder, width=14)
         self.browse_folder_button.place(x=395, y=230)
 
     #function to browse for the folder where the files will be saved
