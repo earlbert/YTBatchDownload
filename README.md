@@ -7,8 +7,11 @@ GUI:
 <img src="gui.png" alt="drawing" width="600"/>
 
 
-Required Modules:
+Requirements:
 ``` 
+Python Version: 3.11 or above
+
+Modules
 Pillow==9.5.0
 pytube==12.1.3
 ```
