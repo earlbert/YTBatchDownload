@@ -4,7 +4,7 @@ This allows the user to download multiple YouTube videos at once as either MP4 o
 
 GUI:
 
-<img src="gui.png" alt="drawing" width="600"/>
+<img src="gui2.png" alt="drawing" width="600"/>
 
 
 Requirements:
